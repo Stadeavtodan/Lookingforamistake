@@ -19,7 +19,7 @@ public:
     ~Time_(); // Визначити: чи потрібен Деструктор?
 
     void setHour(int hour);
-    int gerHour()const;
+    int getHour()const;
     void setMinutes(int minutes);
     int getMinutes()const;
     void setSeconds(int seconds);
