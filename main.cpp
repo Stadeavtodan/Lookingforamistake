@@ -1,4 +1,5 @@
 #include "Time_.h"
+#include "Schedule.h"
 #include <iomanip>
 
 int main()
@@ -36,4 +37,9 @@ int main()
 
     cout << "\n======================================================\n\n";
 
+    Time_ start(8, 30, 0, true);
+    Schedule sched(start, 40, 10, 25, 3, 6);
+    sched.generateSchedule();
+
+    return 0;
 }

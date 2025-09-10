@@ -8,4 +8,6 @@ include_directories(.)
 add_executable(hm_1
         Time_.cpp
         Time_.h
+        Schedule.cpp
+        Schedule.h
         main.cpp)

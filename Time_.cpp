@@ -31,11 +31,20 @@ Time_::Time_(int hour, int minutes, int seconds, bool format) {
 }
 
 Time_::Time_(const Time_ &obj) {
- // я вважаю що не потрібен конструктор копіювання
+    hour = obj.hour;
+    minutes = obj.minutes;
+    seconds = obj.seconds;
+    format = obj.format;
 }
 
 Time_ &Time_::operator=(const Time_ &obj) {
-// теж саме
+    if(this != &obj){
+        hour = obj.hour;
+        minutes = obj.minutes;
+        seconds = obj.seconds;
+        format = obj.format;
+    }
+    return *this;
 }
 
 Time_::~Time_() {
@@ -144,7 +153,9 @@ void Time_::untickTime() {
 }
 
 void Time_::showTime() const {
-    cout << hour / 10 << hour % 10 << "." << minutes / 10 << minutes % 10 << "." << seconds / 10 << seconds % 10 << endl;
+    cout << (hour < 10 ? "0" : "") << hour << ":"
+         << (minutes < 10 ? "0" : "") << minutes << ":"
+         << (seconds < 10 ? "0" : "") << seconds;
 }
 
 //--------- Comparison operators ---------
@@ -156,30 +167,19 @@ bool Time_::operator==(const Time_ &obj) const &{
 }
 
 bool Time_::operator!=(const Time_ &obj) const &{
-    if(this -> hour != obj.hour && this -> minutes != obj.minutes && this -> seconds != obj.seconds)
-        return true;
-    else
-        return false;
+    return  !(*this == obj);
 }
 
 bool Time_::operator>(const Time_ &obj) const &{
-    if(this -> hour > obj.hour){
-        return true;
-    } else if(this -> hour > obj.hour && this -> minutes > obj.hour){
-        return true;
-    }else if(this -> hour > obj.hour && this -> minutes > obj.hour && this -> seconds > obj.seconds){
-        return true;
-    }else{return false;}
+    if (hour != obj.hour) return hour > obj.hour;
+    if (minutes != obj.minutes) return minutes > obj.minutes;
+    return seconds > obj.seconds;
 }
 
 bool Time_::operator<(const Time_ &obj) const &{
-    if(this -> hour < obj.hour){
-        return true;
-    } else if(this -> hour < obj.hour && this -> minutes < obj.hour){
-        return true;
-    }else if(this -> hour < obj.hour && this -> minutes < obj.hour && this -> seconds < obj.seconds){
-        return true;
-    }else{return false;}
+    if (hour != obj.hour) return hour < obj.hour;
+    if (minutes != obj.minutes) return minutes < obj.minutes;
+    return seconds < obj.seconds;
 }
 
 bool Time_::operator>=(const Time_ &obj) const &{
@@ -206,29 +206,32 @@ Time_ &Time_::operator-=(float s) {
 }
 
 Time_ &Time_::operator+=(int m) {
-    int total = minutes + m;
-    hour += total / 60;
-    minutes = total % 60;
+    int totalSeconds = hour * 3600 + minutes * 60 + seconds + m * 60;
+
+    if (format) {
+        totalSeconds = (totalSeconds % (24 * 3600) + 24 * 3600) % (24 * 3600);
+    } else {
+        totalSeconds = (totalSeconds % (12 * 3600) + 12 * 3600) % (12 * 3600);
+        if (totalSeconds == 0) totalSeconds = 12 * 3600;
+    }
+
+    hour = totalSeconds / 3600;
+    minutes = (totalSeconds % 3600) / 60;
+    seconds = totalSeconds % 60;
 
     return *this;
 }
 
 Time_ &Time_::operator-=(int m) {
-    int total = minutes - m;
-    hour -= total / 60;
-    minutes = total % 60;
-
-    return *this;
+    return *this += (-m);
 }
 
 Time_ &Time_::operator+=(long h) {
-    hour += h;
-    return *this;
+    return *this += (int)(h * 60);
 }
 
 Time_ &Time_::operator-=(long h) {
-    hour -= h;
-    return *this;
+    return *this += (int)(-h * 60);
 }
 
 
